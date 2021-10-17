@@ -1,5 +1,6 @@
 import numpy as np
 from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS, cross_origin
 import cv2
 import os
 import tensorflow as tf
@@ -7,10 +8,13 @@ from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input as mobilenet_v2_preprocess_input
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 model = tf.keras.models.load_model("model.h5")
 
 
 @app.route('/upload_file', methods=['POST'])
+@cross_origin()
 def upload_file():
     file = request.files['file']
     if file:
@@ -23,8 +27,9 @@ def upload_file():
 @app.route('/predict', methods=['GET'])
 def predict():
     image = cv2.imread("test_img.png")
-    resized = mobilenet_v2_preprocess_input(image)
-    img_reshape = resized[np.newaxis, ...]
+    dim = (240, 240)
+    resized = cv2.resize(image, dim, interpolation=cv2.INTER_AREA)
+    img_reshape = np.expand_dims(resized, axis=0)
     prediction = model.predict(img_reshape)
 
     if(prediction[0][0] > 0.5):
