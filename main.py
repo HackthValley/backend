@@ -42,7 +42,8 @@ def upload_file():
 def predict():
     image = cv2.imread("test_img.png")
     dim = (240, 240)
-    resized = cv2.resize(image, dim, interpolation=cv2.INTER_AREA)
+    resized = mobilenet_v2_preprocess_input(image)
+    resized = cv2.resize(resized, dim)
     img_reshape = np.expand_dims(resized, axis=0)
     prediction = model.predict(img_reshape)
 
