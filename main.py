@@ -25,11 +25,11 @@ def upload_file():
 
 
 @app.route('/predict', methods=['GET'])
-@cross_origin()
 def predict():
     image = cv2.imread("test_img.png")
-    resized = mobilenet_v2_preprocess_input(image)
-    img_reshape = resized[np.newaxis, ...]
+    dim = (240, 240)
+    resized = cv2.resize(image, dim, interpolation=cv2.INTER_AREA)
+    img_reshape = np.expand_dims(resized, axis=0)
     prediction = model.predict(img_reshape)
 
     if(prediction[0][0] > 0.5):
