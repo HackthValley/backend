@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS, cross_origin
 import cv2
 import os
+import base64
 import tensorflow as tf
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input as mobilenet_v2_preprocess_input
@@ -11,6 +12,18 @@ app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 model = tf.keras.models.load_model("model.h5")
+
+
+@app.route('/upload_canvas', methods=['POST'])
+@cross_origin()
+def upload_file():
+    file = request.files['file']
+    file = base64.decode(file)
+    if file:
+        file.save(os.path.join(os.getcwd(), 'test_img.png'))
+        return "Bonjour"
+    else:
+        return "adios"
 
 
 @app.route('/upload_file', methods=['POST'])
