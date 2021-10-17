@@ -17,11 +17,12 @@ model = tf.keras.models.load_model("model.h5")
 @app.route('/upload_canvas', methods=['POST'])
 @cross_origin()
 def upload_canvas():
-    file = request.files['file']
-    file = base64.decode(file)
+    file = request.form['file']
+    # file = base64.b64decode(file)
     if file:
-        file.save(os.path.join(os.getcwd(), 'test_img.png'))
-        return "Bonjour"
+        with open(os.path.join(os.getcwd(), 'test_img.png'), "wb") as fh:
+            fh.write(base64.decodebytes(file.encode()))
+            return "Bonjour"
     else:
         return "adios"
 
