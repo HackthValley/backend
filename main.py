@@ -16,7 +16,7 @@ model = tf.keras.models.load_model("model.h5")
 
 @app.route('/upload_canvas', methods=['POST'])
 @cross_origin()
-def upload_file():
+def upload_canvas():
     file = request.files['file']
     file = base64.decode(file)
     if file:
